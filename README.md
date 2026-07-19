@@ -219,6 +219,30 @@ Add the following to `~/.codeium/windsurf/mcp_config.json`
 
 </details>
 
+<details>
+<summary> Roo Code </summary>
+
+Add the following to your global `mcp_settings.json` (Roo Code → MCP Servers → Edit Global MCP)
+or project-level `.roo/mcp.json` (Edit Project MCP):
+
+```json
+{
+  "mcpServers": {
+    "pg-aiguide": {
+      "type": "streamable-http",
+      "url": "https://mcp.tigerdata.com/docs"
+    }
+  }
+}
+```
+
+> **Note:** Roo Code requires `"type": "streamable-http"` for remote HTTP MCP servers.
+> Using `"http"` or omitting `type` will fail to connect.
+
+See [Using MCP in Roo Code](https://docs.roocode.com/features/mcp/using-mcp-in-roo) for details.
+
+</details>
+
 ### 💡 Your First Prompt
 
 Once installed, pg-aiguide can answer Postgres questions or design schemas.
