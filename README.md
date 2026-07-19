@@ -123,7 +123,19 @@ publicly available MCP server endpoint hosted by TigerData for searching Postgre
 <details>
 <summary> Codex </summary>
 
-Run the following to add the MCP server to codex:
+#### Agent Skills (`npx skills`)
+
+```bash
+npx skills add timescale/pg-aiguide --skill postgres
+```
+
+Or pick skills interactively:
+
+```bash
+npx skills add timescale/pg-aiguide
+```
+
+#### MCP server
 
 ```bash
 codex mcp add --url "https://mcp.tigerdata.com/docs" pg-aiguide
