@@ -30,6 +30,13 @@ POSTGRES_ADMONITION_CLASSES = [
 ]
 
 
+def resolve_relative_links(soup: BeautifulSoup, base_url: str) -> BeautifulSoup:
+    """Rewrite relative <a href> links to fully-qualified URLs against base_url."""
+    for link in soup.find_all("a", href=True):
+        link["href"] = urljoin(base_url, link["href"])
+    return soup
+
+
 def clean_postgis_html(soup: BeautifulSoup) -> BeautifulSoup:
     """Remove navigation, scripts, styles, and data-URI images from PostGIS HTML."""
     for selector in POSTGIS_REMOVE_SELECTORS:

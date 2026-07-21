@@ -576,6 +576,21 @@ class SitemapMarkdownSpider(SitemapSpider):
 
         return soup
 
+    def resolve_relative_links(self, soup, base_url):
+        """Rewrite relative <a href> links to fully-qualified URLs"""
+        links_resolved = 0
+
+        for link in soup.find_all("a", href=True):
+            resolved = urljoin(base_url, link["href"])
+            if resolved != link["href"]:
+                link["href"] = resolved
+                links_resolved += 1
+
+        if links_resolved > 0:
+            self.logger.debug(f"Resolved {links_resolved} relative links")
+
+        return soup
+
     def convert_callouts_to_admonitions(self, soup):
         """Convert div.callout elements with h6 to admonition-style markdown callouts"""
         callouts_converted = 0
@@ -939,6 +954,9 @@ Respond only with the IDs of the chunks where you believe a split should occur. 
             # Strip data: images if requested
             if self.should_strip_data_images:
                 soup = self.strip_data_images(soup)
+
+            # Resolve relative links to fully-qualified URLs
+            soup = self.resolve_relative_links(soup, url)
 
             # Convert callout divs to admonitions
             soup = self.convert_callouts_to_admonitions(soup)
