@@ -18,6 +18,9 @@ from ingest.constants import (
     OPENAI_API_KEY,
     OPENAI_BASE_URL,
 )
+from ingest.utils.beautiful_soup import (
+    resolve_relative_links as resolve_relative_links_util,
+)
 from ingest.utils.db import build_database_uri
 from langchain_text_splitters import (
     MarkdownHeaderTextSplitter,
@@ -577,14 +580,20 @@ class SitemapMarkdownSpider(SitemapSpider):
         return soup
 
     def resolve_relative_links(self, soup, base_url):
-        """Rewrite relative <a href> links to fully-qualified URLs"""
-        links_resolved = 0
+        """Rewrite relative <a href> links to fully-qualified URLs.
 
-        for link in soup.find_all("a", href=True):
-            resolved = urljoin(base_url, link["href"])
-            if resolved != link["href"]:
-                link["href"] = resolved
-                links_resolved += 1
+        Delegates to the shared ingest.utils.beautiful_soup implementation so
+        the two spiders don't drift; keeps the debug-level resolved-link count.
+        """
+        hrefs_before = [link["href"] for link in soup.find_all("a", href=True)]
+        soup = resolve_relative_links_util(soup, base_url)
+        links_resolved = sum(
+            1
+            for before, link in zip(
+                hrefs_before, soup.find_all("a", href=True), strict=True
+            )
+            if link["href"] != before
+        )
 
         if links_resolved > 0:
             self.logger.debug(f"Resolved {links_resolved} relative links")
