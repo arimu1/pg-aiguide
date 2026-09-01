@@ -15,7 +15,7 @@ from ingest.types import Page
 from ingest.utils.beautiful_soup import (
     extract_postgres_page_metadata,
     postgres_html_to_markdown,
-    resolve_relative_links,
+    resolve_relative_urls,
 )
 
 POSTGRES_DIR = THIS_DIR / "postgres"
@@ -163,8 +163,8 @@ def build_markdown(version: int) -> None:
         except SystemError:
             raise SystemError(f"No div with id found in {html_file}")
 
-        page_url = f"{POSTGRES_BASE_URL}/{version}/{slug}"
-        soup = resolve_relative_links(soup, page_url)
+        page_url = f"{POSTGRES_BASE_URL}/{version}/{html_file.name}"
+        resolve_relative_urls(soup, page_url)
         md_content = postgres_html_to_markdown(soup, is_refentry)
         md_content = f"""---
 title: {title_text}
